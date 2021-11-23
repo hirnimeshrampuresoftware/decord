@@ -12,9 +12,15 @@ yum install -y autoconf automake bzip2 bzip2-devel freetype-devel gcc gcc-c++ gi
 
 # cmake
 pushd ~
-curl -O -L https://github.com/Kitware/CMake/releases/download/v3.19.1/cmake-3.19.1-Linux-x86_64.sh
-chmod +x ./cmake-3.19.1-Linux-x86_64.sh
-./cmake-3.19.1-Linux-x86_64.sh --skip-license --prefix=/usr/local
+if [ `uname -m` == "aarch64" ]; then
+   curl -O -L https://github.com/Kitware/CMake/releases/download/v3.19.3/cmake-3.19.3-Linux-aarch64.sh
+   chmod +x ./cmake-3.19.3-Linux-aarch64.sh
+   ./cmake-3.19.3-Linux-aarch64.sh --skip-license --prefix=/usr/local 
+else
+   curl -O -L https://github.com/Kitware/CMake/releases/download/v3.19.1/cmake-3.19.1-Linux-x86_64.sh
+   chmod +x ./cmake-3.19.1-Linux-x86_64.sh
+   ./cmake-3.19.1-Linux-x86_64.sh --skip-license --prefix=/usr/local
+fi
 /usr/local/bin/cmake -version
 
 # workspace
