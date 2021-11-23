@@ -11,10 +11,16 @@ on:
 jobs:
   manylinux:
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        arch: [x86, aarch64]
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
+    - name: Set up QEMU
+      if: ${{ matrix.arch == 'aarch64' }}
+      uses: docker/setup-qemu-action@v1        
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
@@ -28,6 +34,7 @@ jobs:
         echo "[install]" > python/setup.cfg
         echo "install_lib=" >> python/setup.cfg
     - name: Build manylinux Python wheels
+      if: ${{ matrix.arch == 'x86' }}
       uses: zhreshold/python-wheels-manylinux-build@v0.0.1
       with:
         python-versions: 'cp36-cp36m'
@@ -35,6 +42,15 @@ jobs:
         pre-build-command: 'sh ../tools/build_manylinux2010.sh'
         package-path: 'python'
         pip-wheel-args: '-w ./dist --no-deps'
+    - name: Build manylinux Python wheels
+      if: ${{ matrix.arch == 'aarch64' }}
+      uses: zhreshold/python-wheels-manylinux-build@v0.0.1-manylinux2014_aarch64
+      with:
+        python-versions: 'cp36-cp36m'
+        build-requirements: 'numpy'
+        pre-build-command: 'sh ../tools/build_manylinux2010.sh'
+        package-path: 'python'
+        pip-wheel-args: '-w ./dist --no-deps'        
     - name: Sanity test
       run: |
         pwd
