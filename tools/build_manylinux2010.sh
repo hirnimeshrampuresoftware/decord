@@ -32,10 +32,10 @@ curl -O -L https://github.com/dmlc/decord/files/5685923/nasm-2.14.02.zip
 unzip nasm-2.14.02.zip
 cd nasm-2.14.02
 if [ `uname -m` == "aarch64" ]; then
-      yum install -y epel-release
-      yum-config-manager --enable epel
-      yum install -y autoconf
-      yum install -y autogen
+      #yum install -y epel-release
+ #     yum-config-manager --enable epel
+  #    yum install -y autoconf
+   #   yum install -y autogen
       autoreconf --install
 fi      
 ./autogen.sh
