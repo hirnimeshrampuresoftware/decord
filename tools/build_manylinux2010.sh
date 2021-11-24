@@ -36,6 +36,7 @@ if [ `uname -m` == "aarch64" ]; then
       yum-config-manager --enable epel
       yum install -y autoconf
       yum install -y autogen
+      autoreconf --install
 fi      
 ./autogen.sh
 ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin"
