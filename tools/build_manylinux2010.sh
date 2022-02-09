@@ -35,8 +35,7 @@ if [ `uname -m` == "aarch64" ]; then
       autoreconf --install
 fi      
 ./autogen.sh
-./configure
-#--prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin"
+./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin"
 make -j$(nproc)
 make install
 
