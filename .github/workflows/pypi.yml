@@ -12,6 +12,7 @@ jobs:
   manylinux:
     runs-on: ubuntu-18.04
     strategy:
+      fail-fast: false
       matrix:
         arch: [x86, aarch64]
     steps:
