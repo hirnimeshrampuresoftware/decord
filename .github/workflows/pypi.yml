@@ -53,6 +53,7 @@ jobs:
         package-path: 'python'
         pip-wheel-args: '-w ./dist --no-deps'        
     - name: Sanity test
+      if: ${{ matrix.arch == 'x86_64' }}
       run: |
         pwd
         ls ./python/dist/
@@ -73,6 +74,34 @@ jobs:
         find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "which python && python -m pip install '{}' --force-reinstall" \;
         python -c "import decord; print(decord.__version__)"
         python -m nose -v ./tests/python/unittests/test_video_reader.py
+    - name: Sanity test
+      if: ${{ matrix.arch == 'aarch64' }}
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
+            quay.io/pypa/manylinux2014_aarch64 \
+            bash -exc '/opt/python/cp36-cp36m/bin/python -m venv .env && \
+            source .env/bin/activate && \
+            pip install --upgrade pip && \
+            pwd && \
+            ls ./python/dist/ && \
+            sudo rm ./python/dist/decord-*-linux_*.whl && \
+            which python && \
+            which pip && \
+            sudo -H find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "zip --delete '{}' 'numpy/*' | true" \; && \
+            sudo -H find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "zip --delete '{}' 'pip/*' | true" \; && \
+            sudo -H find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "unzip '{}' -d ./decord-cwd" \; && \
+            ls && \
+            cd ./decord-cwd && \
+            ls -la && \
+            sudo -H find . -type d -iname "decord-*.dist-info" -exec sh -c "echo decord > '{}'/top_level.txt" \; && \
+            sudo -H find . -type d -iname "decord-*.dist-info" -exec sh -c "sed -i '/^numpy/d' '{}'/RECORD" \; && \
+            sudo -H find . -type d -iname "decord-*.dist-info" -exec sh -c "sed -i '/^pip/d' '{}'/RECORD" \; && \
+            cd .. && \
+            sudo -H find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "rm '{}' && cd decord-cwd && zip -r ../'{}' ./*" \; && \
+            find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "which python && python -m pip install '{}' --force-reinstall" \; && \
+            python -c "import decord; print(decord.__version__)" && \
+            python -m nose -v ./tests/python/unittests/test_video_reader.py && \
+            deactivate'
     - name: Rename wheel
       run: |
         cd ./python
