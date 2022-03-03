@@ -82,7 +82,7 @@ jobs:
             bash -exc '/opt/python/cp36-cp36m/bin/python -m venv .env && \
             source .env/bin/activate && \
             pip install --upgrade pip && \
-            yum install zip unzip && \
+            yum install -y zip unzip && \
             pwd && \
             ls ./python/dist/ && \
             rm ./python/dist/decord-*-linux_*.whl && \
