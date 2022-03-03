@@ -78,7 +78,8 @@ jobs:
             bash -exc '/opt/python/cp36-cp36m/bin/python -m venv .env && \
             source .env/bin/activate && \
             pip install --upgrade --no-cache-dir pip numpy && \
-            sh /ws/tools/build_manylinux2010.sh && \
+            cd python && \
+            sh ../tools/build_manylinux2010.sh && \
             /opt/python/cp36-cp36m/bin/pip wheel . -w ./dist --no-deps && \
             find . -type f -iname "*-linux*.whl" -exec sh -c "auditwheel repair '{}' -w \$(dirname '{}') --plat manylinux2014_aarch64" && \
             echo "Succesfully build wheels:" && \
