@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86, aarch64]
+        arch: [x86]
     steps:
     - uses: actions/checkout@v2
       with:
@@ -64,7 +64,7 @@ jobs:
     name: "Build and test cp36-cp36m aarch64 wheel"
     strategy:
       fail-fast: false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     env:
       py: /opt/python/cp36-cp36m/bin/python
       img: quay.io/pypa/manylinux2014_aarch64:2021-01-12-c8250d8
