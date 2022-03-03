@@ -19,9 +19,6 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
-    - name: Set up QEMU
-      if: ${{ matrix.arch == 'aarch64' }}
-      uses: docker/setup-qemu-action@v1        
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
@@ -35,7 +32,6 @@ jobs:
         echo "[install]" > python/setup.cfg
         echo "install_lib=" >> python/setup.cfg
     - name: Build manylinux Python wheels
-      if: ${{ matrix.arch == 'x86' }}
       uses: zhreshold/python-wheels-manylinux-build@v0.0.1
       with:
         python-versions: 'cp36-cp36m'
@@ -43,17 +39,7 @@ jobs:
         pre-build-command: 'sh ../tools/build_manylinux2010.sh'
         package-path: 'python'
         pip-wheel-args: '-w ./dist --no-deps'
-    - name: Build manylinux Python wheels
-      if: ${{ matrix.arch == 'aarch64' }}
-      uses: hirnimeshrampuresoftware/python-wheels-manylinux-build@master
-      with:
-        python-versions: 'cp36-cp36m'
-        build-requirements: 'numpy'
-        pre-build-command: 'sh ../tools/build_manylinux2010.sh'
-        package-path: 'python'
-        pip-wheel-args: '-w ./dist --no-deps'        
     - name: Sanity test
-      if: ${{ matrix.arch == 'x86_64' }}
       run: |
         pwd
         ls ./python/dist/
@@ -74,14 +60,32 @@ jobs:
         find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "which python && python -m pip install '{}' --force-reinstall" \;
         python -c "import decord; print(decord.__version__)"
         python -m nose -v ./tests/python/unittests/test_video_reader.py
-    - name: Sanity test
-      if: ${{ matrix.arch == 'aarch64' }}
+  manylinux_aarch64:
+    name: "Build and test cp36-cp36m aarch64 wheel"
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    env:
+      py: /opt/python/cp36-cp36m/bin/python
+      img: quay.io/pypa/manylinux2014_aarch64:2021-01-12-c8250d8
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up QEMU
+      id: qemu
+      uses: docker/setup-qemu-action@v1        
+    - name: Build and test wheel
       run: |
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
             quay.io/pypa/manylinux2014_aarch64 \
             bash -exc '/opt/python/cp36-cp36m/bin/python -m venv .env && \
             source .env/bin/activate && \
-            pip install --upgrade pip && \
+            pip install --upgrade --no-cache-dir pip numpy && \
+            sh ../tools/build_manylinux2010.sh && \
+            /opt/python/cp36-cp36m/bin/pip wheel . -w ./dist --no-deps && \
+            find . -type f -iname "*-linux*.whl" -exec sh -c "auditwheel repair '{}' -w \$(dirname '{}') --plat manylinux2014_aarch64 && \
+            echo "Succesfully build wheels:" && \
+            find . -type f -iname "*-manylinux*.whl" && \
             yum install -y zip unzip && \
             pwd && \
             ls ./python/dist/ && \
