@@ -80,7 +80,7 @@ jobs:
             pip install --upgrade --no-cache-dir pip numpy && \
             sh ../tools/build_manylinux2010.sh && \
             /opt/python/cp36-cp36m/bin/pip wheel . -w ./dist --no-deps && \
-            find . -type f -iname "*-linux*.whl" -exec sh -c "auditwheel repair '{}' -w \$(dirname '{}') --plat manylinux2014_aarch64 && \
+            find . -type f -iname "*-linux*.whl" -exec sh -c "auditwheel repair '{}' -w \$(dirname '{}') --plat manylinux2014_aarch64" && \
             echo "Succesfully build wheels:" && \
             find . -type f -iname "*-manylinux*.whl" && \
             yum install -y zip unzip && \
@@ -101,7 +101,7 @@ jobs:
             cd .. && \
             find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "rm '{}' && cd decord-cwd && zip -r ../'{}' ./*" \; && \
             find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "which python && python -m pip install '{}' --force-reinstall" \; && \
-            python -c import decord && \
+            python -c "import decord; print(decord.__version__)" && \
             python -m nose -v ./tests/python/unittests/test_video_reader.py && \
             deactivate'
     - name: Rename wheel
