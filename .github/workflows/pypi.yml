@@ -101,7 +101,7 @@ jobs:
             cd .. && \
             find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "rm '{}' && cd decord-cwd && zip -r ../'{}' ./*" \; && \
             find ./python/dist/ -type f -iname "decord*manylinux*.whl" -exec sh -c "which python && python -m pip install '{}' --force-reinstall" \; && \
-            python -c "import decord" && \
+            python -c \"import decord; print(decord.__version__)\" && \
             python -m nose -v ./tests/python/unittests/test_video_reader.py && \
             deactivate'
     - name: Rename wheel
