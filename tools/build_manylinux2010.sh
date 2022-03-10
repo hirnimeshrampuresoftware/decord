@@ -33,7 +33,8 @@ unzip nasm-2.14.02.zip
 cd nasm-2.14.02
 ./autogen.sh
 ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin"
-make -j$(nproc)
+make
+#-j$(nproc)
 make install
 
 # yasm
