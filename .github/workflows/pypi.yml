@@ -83,7 +83,8 @@ jobs:
             cd python && \
             sh ../tools/build_manylinux2010.sh && \
             /opt/python/cp36-cp36m/bin/pip wheel . -w ./dist --no-deps && \
-            find . -type f -iname "*-linux*.whl" -exec sh -c "auditwheel repair '{}' -w \$(dirname '{}') --plat manylinux2014_aarch64" && \
+            auditwheel repair ./dist/*.whl
+            #find . -type f -iname "*-linux*.whl" -exec sh -c "auditwheel repair '{}' -w \$(dirname '{}') --plat manylinux2014_aarch64" && \
             echo "Succesfully build wheels:" && \
             find . -type f -iname "*-manylinux*.whl" && \
             yum install -y zip unzip && \
