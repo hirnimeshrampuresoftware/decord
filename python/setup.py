@@ -84,6 +84,7 @@ setup(
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: Apache Software License',
     ],
+    cmdclass={"build_ext": build_ext},
     license='APACHE',
     **setup_kwargs
 )
