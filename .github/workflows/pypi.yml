@@ -61,7 +61,7 @@ jobs:
         python -c "import decord; print(decord.__version__)"
         python -m nose -v ./tests/python/unittests/test_video_reader.py
   manylinux_aarch64:
-    name: "Build and test cp36-cp36m aarch64 wheel"
+    name: "Build and test cp37-cp37m aarch64 wheel"
     strategy:
       fail-fast: false
     runs-on: ubuntu-18.04
@@ -76,13 +76,13 @@ jobs:
       run: |
         docker run --rm -v ${{ github.workspace }}:/ws:rw --workdir=/ws \
             quay.io/pypa/manylinux2014_aarch64:2021-01-12-c8250d8 \
-            bash -exc '/opt/python/cp36-cp36m/bin/python -m venv .env && \
+            bash -exc '/opt/python/cp37-cp37m/bin/python -m venv .env && \
             source .env/bin/activate && \
-            /opt/python/cp36-cp36m/bin/pip install --upgrade pip && \
-            /opt/python/cp36-cp36m/bin/pip install numpy && \
+            /opt/python/cp37-cp37m/bin/pip install --upgrade pip && \
+            /opt/python/cp37-cp37m/bin/pip install numpy && \
             cd python && \
             sh ../tools/build_manylinux2010.sh && \
-            /opt/python/cp36-cp36m/bin/pip wheel . -w ./dist --no-deps && \
+            /opt/python/cp37-cp37m/bin/pip wheel . -w ./dist --no-deps && \
             find . -type f -iname "*-linux*.whl" -exec sh -c "auditwheel repair "\""{}"\"" -w $(dirname "\""{}"\"") --plat "\""manylinux2014_aarch64"\"" || { echo "\""Repairing wheels failed."\""; auditwheel show "\""{}"\"" >> /github/workspace/python/failed-wheels; }" ";" && \
             #auditwheel repair --plat manylinux2014_aarch64 ./dist/*.whl && \
             #find . -type f -iname "*-linux*.whl" -exec sh -c "auditwheel repair '{}' -w \$(dirname '{}') --plat manylinux2014_aarch64" && \
