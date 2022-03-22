@@ -81,6 +81,7 @@ jobs:
             cd python && \
             sh ../tools/build_manylinux2010.sh && \
             /opt/python/cp36-cp36m/bin/pip wheel . -w ./dist --no-deps && \
+            rm -rf ./build/libdecord.so && \
             find . -type f -iname "*-linux*.whl" -exec sh -c "auditwheel repair "\""{}"\"" -w $(dirname "\""{}"\"") --plat "\""manylinux2014_aarch64"\"" || { echo "\""Repairing wheels failed."\""; auditwheel show "\""{}"\"" >> /github/workspace/python/failed-wheels; }" ";" && \
             echo "Succesfully build wheels:" && \
             find . -type f -iname "*-manylinux*.whl" && \
