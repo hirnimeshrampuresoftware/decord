@@ -78,7 +78,7 @@ setup(
         'numpy>=1.14.0',
     ],
     url='https://github.com/dmlc/decord',
-    distclass=BinaryDistribution,
+#    distclass=BinaryDistribution,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3',
